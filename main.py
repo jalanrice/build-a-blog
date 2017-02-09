@@ -24,10 +24,53 @@ template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
                                 autoescape = True)
 
-class MainHandler(webapp2.RequestHandler):
+class Handler(webapp2.RequestHandler):
+    def write(self, *a, **kw):
+        self.response.out.write(*a, **kw)
+
+    def render_str(self, template, **params):
+        t = jinja_env.get_template(template)
+        return t.render(params)
+
+    def render(self, template, **kw):
+        self.write(self.render_str(template, **kw))
+
+    def renderError(self, error_code):
+        self.error(error_code)
+        self.response.write("Oops! Something went wrong.")
+
+class Bpost(db.Model):
+    title = db.StringProperty(required = True)
+    bpost = db.TextProperty(required = True)
+    created = db.DateTimeProperty(auto_now_add = True)
+
+class Index(Handler):
     def get(self):
-        self.response.write('Hello world!')
+        self.render("base.html")
+
+class MainHandler(Handler):
+    def render_blog(self, title="", bpost="", error=""):
+        bposts = db.GqlQuery("SELECT * FROM Bpost ORDER BY created DESC")
+
+        self.render("blog.html", title=title, bpost=bpost, error=error, bposts=bposts)
+
+    def get(self):
+        self.render_blog()
+
+    def post(self):
+        title = self.request.get("title")
+        bpost = self.request.get("bpost")
+
+        if title and bpost:
+            a = Bpost(title = title, bpost = bpost)
+            a.put()
+
+            self.redirect("/blog")
+        else:
+            error = "We need both a title and a blog post! Express yourself! People care about what you think and want to read about it at length."
+            self.render_blog(title, bpost, error)
 
 app = webapp2.WSGIApplication([
-    ('/', MainHandler)
+    ('/', Index),
+    ('/blog', MainHandler)
 ], debug=True)

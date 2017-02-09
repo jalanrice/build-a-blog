@@ -70,19 +70,21 @@ class NewPost(Handler):
             a = Bpost(title = title, bpost = bpost)
             a.put()
 
-            self.redirect("/blog")
+            self.redirect('/blog/%s' % str(a.key().id()))
         else:
             error = """We need both a title and a blog post! Express yourself!
                     People care about your thoughts. They want them properly
                     prefaced, and then to read them at length."""
             self.render("newpost.html", title=title, bpost=bpost, error=error)
 
-# class ViewPostHandler(webapp2.RequestHandler):
-#     def get(self, id):
+class ViewPostHandler(webapp2.RequestHandler):
+    def get(self, id):
+        self.response.write(id)
 
 
 app = webapp2.WSGIApplication([
     ('/', Index),
     ('/blog', MainHandler),
-    ('/newpost', NewPost)
+    ('/newpost', NewPost),
+    webapp2.Route('/blog/<id:\d+>', ViewPostHandler)
 ], debug=True)

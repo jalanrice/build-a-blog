@@ -77,9 +77,17 @@ class NewPost(Handler):
                     prefaced, and then to read them at length."""
             self.render("newpost.html", title=title, bpost=bpost, error=error)
 
-class ViewPostHandler(webapp2.RequestHandler):
+class ViewPostHandler(Handler):
     def get(self, id):
-        self.response.write(id)
+        id = int(id)
+
+        if id:
+            bpost = Bpost.get_by_id(id, parent=None)
+            self.render("singlepost.html", bpost=bpost)
+        # self.response.write(id)
+
+        else:
+            self.error(404)
 
 
 app = webapp2.WSGIApplication([

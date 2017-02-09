@@ -50,12 +50,17 @@ class Index(Handler):
 
 class MainHandler(Handler):
     def render_blog(self, title="", bpost="", error=""):
-        bposts = db.GqlQuery("SELECT * FROM Bpost ORDER BY created DESC")
+        bposts = db.GqlQuery("SELECT * FROM Bpost ORDER BY created DESC LIMIT 5")
 
         self.render("blog.html", title=title, bpost=bpost, error=error, bposts=bposts)
 
     def get(self):
         self.render_blog()
+
+
+class NewPost(Handler):
+    def get(self):
+        self.render("newpost.html")
 
     def post(self):
         title = self.request.get("title")
@@ -67,10 +72,17 @@ class MainHandler(Handler):
 
             self.redirect("/blog")
         else:
-            error = "We need both a title and a blog post! Express yourself! People care about what you think and want to read about it at length."
-            self.render_blog(title, bpost, error)
+            error = """We need both a title and a blog post! Express yourself!
+                    People care about your thoughts. They want them properly
+                    prefaced, and then to read them at length."""
+            self.render("newpost.html", title=title, bpost=bpost, error=error)
+
+# class ViewPostHandler(webapp2.RequestHandler):
+#     def get(self, id):
+
 
 app = webapp2.WSGIApplication([
     ('/', Index),
-    ('/blog', MainHandler)
+    ('/blog', MainHandler),
+    ('/newpost', NewPost)
 ], debug=True)

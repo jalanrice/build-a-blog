@@ -1,30 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-    <form method="post">
-      <label>
-        <div>Title</div>
-        <input type="text" name="title" value="{{title}}">
-      </label>
-
-      <label>
-        <div>Post</div>
-        <textarea name="bpost">{{bpost}}</textarea>
-      </label>
-
-      <div class="error">{{error}}</div>
-
-      <input type="submit">
-    </form>
-
-    <hr>
-
+    <a class="nav-link" href="/newpost">Create a new post</a>
+    <br>
+    <br>
     {% for bpost in bposts %}
       <div class="bpost">
           <div class="bpost-title">{{bpost.title}}</div>
-          <pre class="bpost-body">{{bpost.bpost}}</pre>
+          <div class="bpost-body">{{bpost.bpost}}</div>
       </div>
     {% endfor %}
-
 {% endblock %}

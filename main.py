@@ -51,7 +51,6 @@ class Index(Handler):
 class MainHandler(Handler):
     def render_blog(self, title="", bpost="", error=""):
         bposts = db.GqlQuery("SELECT * FROM Bpost ORDER BY created DESC LIMIT 5")
-
         self.render("blog.html", title=title, bpost=bpost, error=error, bposts=bposts)
 
     def get(self):

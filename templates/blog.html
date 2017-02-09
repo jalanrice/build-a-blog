@@ -6,7 +6,7 @@
     <br>
     {% for bpost in bposts %}
       <div class="bpost">
-          <div class="bpost-title">{{bpost.title}}</div>
+          <div class="bpost-title"><a href="/blog/{{ bpost.key().id() }}">{{bpost.title}}</a></div>
           <div class="bpost-body">{{bpost.bpost}}</div>
       </div>
     {% endfor %}

@@ -37,7 +37,7 @@ class Handler(webapp2.RequestHandler):
 
     def renderError(self, error_code):
         self.error(error_code)
-        self.response.write("Oops! Something went wrong.")
+        self.response.write("404 post not found")
 
 class Bpost(db.Model):
     title = db.StringProperty(required = True)
@@ -79,14 +79,14 @@ class NewPost(Handler):
 class ViewPostHandler(Handler):
     def get(self, id):
         id = int(id)
+        bpost = Bpost.get_by_id(id, parent=None)
 
-        if id:
-            bpost = Bpost.get_by_id(id, parent=None)
+        if bpost:
             self.render("singlepost.html", bpost=bpost)
         # self.response.write(id)
 
         else:
-            self.error(404)
+            self.renderError(404)
 
 
 app = webapp2.WSGIApplication([
